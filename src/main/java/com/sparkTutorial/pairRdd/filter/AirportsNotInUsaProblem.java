@@ -1,5 +1,14 @@
 package com.sparkTutorial.pairRdd.filter;
 
+import com.sparkTutorial.rdd.commons.Utils;
+import org.apache.spark.SparkConf;
+import org.apache.spark.SparkContext;
+import org.apache.spark.api.java.JavaPairRDD;
+import org.apache.spark.api.java.JavaRDD;
+import org.apache.spark.api.java.JavaSparkContext;
+import org.apache.spark.api.java.function.PairFunction;
+import scala.Tuple2;
+
 public class AirportsNotInUsaProblem {
 
     public static void main(String[] args) throws Exception {
@@ -18,5 +27,22 @@ public class AirportsNotInUsaProblem {
            ("Wewak Intl", "Papua New Guinea")
            ...
          */
+
+        SparkConf sparkConf = new SparkConf().setAppName("airportsNotInUsa").setMaster("local[*]");
+
+        JavaSparkContext sparkContext = new JavaSparkContext(sparkConf);
+
+
+        JavaRDD<String> initRdd = sparkContext.textFile("in/airports.text");
+
+        JavaPairRDD<String,String> airportCountry = initRdd.mapToPair(createMapPair());
+
+        JavaPairRDD<String,String> noUSa = airportCountry.filter(keyValue -> !keyValue._2.equals("\"United States\""));
+
+
     }
+    private static PairFunction<String,String,String> createMapPair(){
+        return (PairFunction<String,String,String>) line -> new Tuple2<>(line.split(Utils.COMMA_DELIMITER)[1], line.split(Utils.COMMA_DELIMITER)[3]);
+    }
+
 }

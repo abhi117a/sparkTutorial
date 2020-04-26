@@ -23,7 +23,7 @@ public class AirportsByLatitudeProblem {
            ...
          */
 
-        SparkConf sparkConf = new SparkConf().setAppName("airportsByLatitude").setMaster("local[2]");
+        SparkConf sparkConf = new SparkConf().setAppName("airportsByLatitude").setMaster("local[*]");
 
         JavaSparkContext javaSparkContext = new JavaSparkContext(sparkConf);
 
